@@ -6,6 +6,7 @@ import Today from './views/Today';
 import Planning from './views/Planning';
 import TimerView from './views/TimerView';
 import Stats from './views/Stats';
+import Nutrition from './views/Nutrition';
 import { useStore } from './lib/store';
 import { useDailyReminder } from './lib/useDailyReminder';
 
@@ -39,8 +40,9 @@ export default function App() {
   const start = (dateKey, workoutIds, week) => setWorkout({ dateKey, workoutIds, week });
 
   const views = {
-    today: <Today onStart={start} onGoPlan={() => setTab('plan')} />,
+    today: <Today onStart={start} onGoPlan={() => setTab('plan')} onGoFood={() => setTab('food')} />,
     plan: <Planning onStart={start} />,
+    food: <Nutrition />,
     timer: <TimerView />,
     stats: <Stats />,
   };

@@ -1,17 +1,18 @@
 import { motion } from 'framer-motion';
-import { BarChart3, CalendarDays, Flame, Timer } from 'lucide-react';
+import { BarChart3, CalendarDays, Flame, Timer, UtensilsCrossed } from 'lucide-react';
 
 export const TABS = [
   { id: 'today', label: 'Aujourd’hui', icon: Flame },
   { id: 'plan', label: 'Planning', icon: CalendarDays },
-  { id: 'timer', label: 'Timer HIIT', icon: Timer },
+  { id: 'food', label: 'Nutrition', icon: UtensilsCrossed },
+  { id: 'timer', label: 'Timer', icon: Timer },
   { id: 'stats', label: 'Stats', icon: BarChart3 },
 ];
 
 export function BottomNav({ tab, onChange }) {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.06] bg-ink/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl md:hidden">
-      <div className="mx-auto grid max-w-md grid-cols-4">
+      <div className="mx-auto grid max-w-md grid-cols-5">
         {TABS.map(({ id, label, icon: Icon }) => {
           const active = tab === id;
           return (
@@ -47,7 +48,7 @@ export function SideNav({ tab, onChange }) {
           >
             {active && <motion.span layoutId="side-active" className="absolute inset-0 rounded-2xl bg-white/[0.07] ring-1 ring-white/10" />}
             <Icon size={20} className={`relative ${active ? 'text-thenx' : ''}`} />
-            <span className="relative whitespace-nowrap text-left">{id === 'stats' ? 'Stats & Rappels' : id === 'plan' ? 'Planning 4 semaines' : label}</span>
+            <span className="relative whitespace-nowrap text-left">{{ stats: 'Stats & Rappels', plan: 'Planning 4 semaines', timer: 'Timer HIIT', food: 'Nutrition & Poids' }[id] || label}</span>
           </button>
         );
       })}

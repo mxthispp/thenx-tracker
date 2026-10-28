@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { mondayOf, toKey } from './dates';
+import { defaultProfile } from './nutrition';
 
 const STORAGE_KEY = 'thenx-tracker-v1';
 
@@ -7,6 +8,11 @@ const defaultState = () => ({
   version: 1,
   startDate: toKey(mondayOf(new Date())),
   log: {},
+  profile: defaultProfile(),
+  food: {},
+  weights: {},
+  water: {},
+  customFoods: [],
   settings: {
     scheduleVariant: 'original',
     deload: false,
@@ -19,6 +25,8 @@ const defaultState = () => ({
     sessionTime: '18:30',
     icsIncludeSports: true,
     lastNotified: null,
+    mealReminders: false,
+    mealTimes: ['10:30', '16:30', '21:30'],
   },
 });
 
@@ -28,11 +36,22 @@ function load() {
     if (!raw) return defaultState();
     const parsed = JSON.parse(raw);
     const base = defaultState();
-    return { ...base, ...parsed, settings: { ...base.settings, ...parsed.settings } };
+    return merge(base, parsed);
   } catch {
     return defaultState();
   }
 }
+
+function merge(base, data) {
+  return {
+    ...base,
+    ...data,
+    settings: { ...base.settings, ...data.settings },
+    profile: { ...base.profile, ...data.profile, ramp: { ...base.profile.ramp, ...data.profile?.ramp } },
+  };
+}
+
+const uid = () => Math.random().toString(36).slice(2, 10);
 
 const StoreContext = createContext(null);
 
@@ -74,7 +93,22 @@ export function StoreProvider({ children }) {
         sessions: { ...d.sessions, [wid]: { ...sess, exercises: { ...sess.exercises, [exId]: { ...ex, ...patch } } } },
       };
     }),
-    replaceAll: (next) => setState({ ...defaultState(), ...next, settings: { ...defaultState().settings, ...next.settings } }),
+    setProfile: (patch) => setState((s) => ({ ...s, profile: { ...s.profile, ...patch } })),
+    addFood: (key, entry) => setState((s) => ({
+      ...s,
+      food: { ...s.food, [key]: [...(s.food[key] || []), { id: uid(), at: new Date().toISOString(), ...entry }] },
+    })),
+    removeFood: (key, id) => setState((s) => ({ ...s, food: { ...s.food, [key]: (s.food[key] || []).filter((e) => e.id !== id) } })),
+    addCustomFood: (food) => setState((s) => ({ ...s, customFoods: [...s.customFoods, { ...food, id: `custom-${uid()}`, cat: 'perso' }] })),
+    removeCustomFood: (id) => setState((s) => ({ ...s, customFoods: s.customFoods.filter((f) => f.id !== id) })),
+    setWeight: (key, kg) => setState((s) => {
+      const weights = { ...s.weights };
+      if (kg == null) delete weights[key];
+      else weights[key] = kg;
+      return { ...s, weights };
+    }),
+    addWater: (key, ml) => setState((s) => ({ ...s, water: { ...s.water, [key]: Math.max(0, (s.water[key] || 0) + ml) } })),
+    replaceAll: (next) => setState(merge(defaultState(), next)),
     reset: () => setState(defaultState()),
   }), [updateDay]);
 

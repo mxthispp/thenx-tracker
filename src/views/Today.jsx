@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
-import { AlertTriangle, Check, Clock, Flame, Play, Trophy } from 'lucide-react';
+import { AlertTriangle, Check, ChevronRight, Clock, Flame, Play, Plus, Trophy } from 'lucide-react';
+import { FOODS } from '../data/foods';
+import { dayTotals, targets } from '../lib/nutrition';
 import { ACTIVITIES, DAY_SHORT, WORKOUTS, weekConfig } from '../data/program';
 import { useStore } from '../lib/store';
 import { addDays, dow, formatLong, mondayOf, programWeekOf, toKey } from '../lib/dates';
@@ -7,8 +9,8 @@ import { currentStreak, dayStatus, isItemDone, programProgress, weekProgress } f
 import ProgressRing from '../components/ProgressRing';
 import { ACCENTS, Button, Card, Pill, SectionTitle } from '../components/ui';
 
-export default function Today({ onStart, onGoPlan }) {
-  const { state, toggleActivity, setStartDate } = useStore();
+export default function Today({ onStart, onGoPlan, onGoFood }) {
+  const { state, toggleActivity, setStartDate, addFood } = useStore();
   const today = new Date();
   const key = toKey(today);
   const rawWeek = programWeekOf(today, state.startDate);
@@ -130,6 +132,11 @@ export default function Today({ onStart, onGoPlan }) {
         </div>
       )}
 
+      <NutritionCard state={state} dateKey={key} onOpen={onGoFood} onShake={() => {
+        const f = FOODS.find((x) => x.id === 'shake');
+        addFood(key, { foodId: f.id, emoji: f.emoji, name: f.name, qty: 1, slot: 'snack', kcal: f.kcal, p: f.p, c: f.c, f: f.f });
+      }} />
+
       {/* Progression */}
       <div>
         <SectionTitle>Progression</SectionTitle>
@@ -187,5 +194,33 @@ export default function Today({ onStart, onGoPlan }) {
         </ul>
       </Card>
     </div>
+  );
+}
+
+function NutritionCard({ state, dateKey, onOpen, onShake }) {
+  const t = targets(state);
+  const tot = dayTotals(state, dateKey);
+  const left = Math.round(t.kcal - tot.kcal);
+  return (
+    <Card className="p-4">
+      <button onClick={onOpen} className="flex w-full items-center gap-4 text-left">
+        <ProgressRing value={tot.kcal / t.kcal} size={64} stroke={7} gradient={['#F97316', '#EF4444']}>
+          <span className="text-[13px] font-black tabular-nums">{Math.round((tot.kcal / t.kcal) * 100)}%</span>
+        </ProgressRing>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Nutrition</span>
+          <span className="block font-bold tabular-nums">{Math.round(tot.kcal)} / {t.kcal} kcal</span>
+          <span className="block text-xs tabular-nums text-slate-500">
+            Protéines {Math.round(tot.p)}/{t.protein} g · {left > 0 ? `encore ${left} kcal` : 'objectif atteint ✓'}
+          </span>
+        </span>
+        <ChevronRight size={20} className="text-slate-500" />
+      </button>
+      {left > 0 && (
+        <motion.button whileTap={{ scale: 0.97 }} onClick={onShake} className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-white/[0.06] py-2.5 text-sm font-semibold hover:bg-white/10">
+          <Plus size={16} /> Shake maison · 905 kcal
+        </motion.button>
+      )}
+    </Card>
   );
 }

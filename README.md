@@ -25,6 +25,13 @@ Installation sur téléphone : ouvre l'URL dans Safari/Chrome → « Ajouter à 
 - **Timer HIIT** : préréglages Débutant 30/15, Intermédiaire 40/15, Avancé 45/15, Perso ; anneau coloré par phase ; bips Web Audio 3-2-1 + bip long ; annonce vocale `speechSynthesis` ; écran maintenu allumé (Wake Lock).
 - **Stats & Rappels** : calendrier mensuel (THENX / Boxe / Foot), séries, RPE moyen, répartition, notification quotidienne, export `.ics` (4 semaines, liens YouTube, alerte 30 min), export/import JSON, réinitialisation.
 
+- **Nutrition & Poids** :
+  - objectifs calculés (Mifflin-St Jeor × activité + surplus prise de masse) : kcal, protéines 2 g/kg, lipides, glucides, eau ;
+  - montée progressive pour petit appétit (+150 kcal/semaine depuis ton apport actuel) ;
+  - journal des repas en 5 prises, bibliothèque d'aliments denses, shake maison en 1 tap, saisie libre et « Mes aliments » ;
+  - hydratation, rappels de collation ;
+  - pesée quotidienne, courbe avec moyenne 7 jours, rythme kg/semaine et ajustement calorique proposé toutes les 2 semaines.
+
 ## Planning optimisé boxe
 
 Le planning demandé place **Pectoraux & Triceps le mercredi, veille de la boxe du jeudi**, ce qui contredit la règle « jamais triceps/épaules la veille de la boxe ». L'app garde ce planning par défaut, le signale, et propose un interrupteur **Planning optimisé boxe** (onglet Planning) qui inverse mercredi (Abdos) et vendredi (Push).
