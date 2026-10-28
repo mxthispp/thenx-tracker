@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  background: #090D16;
+  overscroll-behavior-y: none;
+}
+
+body {
+  background-image:
+    radial-gradient(60rem 40rem at 110% -10%, rgba(239, 68, 68, 0.10), transparent 60%),
+    radial-gradient(50rem 30rem at -20% 110%, rgba(16, 185, 129, 0.05), transparent 60%);
+  background-attachment: fixed;
+}
+
+button { -webkit-user-select: none; user-select: none; }
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #252F44; border-radius: 8px; }
